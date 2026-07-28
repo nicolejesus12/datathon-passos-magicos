@@ -16,7 +16,7 @@ st.subheader("Plataforma de Analytics e Predição de Risco Acadêmico")
 st.markdown("---")
 
 # Barra Lateral (Sidebar)
-st.sidebar.image("https://passosmagicos.org.br/wp-content/uploads/2020/09/logo-passos-magicos.png", width=200)
+st.sidebar.image("src/logo-passos-magicos.png", width=200)
 st.sidebar.title("Navegação")
 st.sidebar.info("Projeto Datathon — PosTech Data Analytics")
 
@@ -69,8 +69,8 @@ with aba3:
         # Exemplo simulado simples
         media_score = (ian + ida + ieg + ips) / 4
         if media_score < 5.0:
-            st.error(f"🔴 **Alto Risco de Defasagem** (Score Médio: {media_score:.1f})")
+            st.error(f"**Alto Risco de Defasagem** (Score Médio: {media_score:.1f})")
             st.write("Recomendação: Encaminhar para acompanhamento psicopedagógico prioritário.")
         else:
-            st.success(f"🟢 **Baixo Risco de Defasagem** (Score Médio: {media_score:.1f})")
+            st.success(f"**Baixo Risco de Defasagem** (Score Médio: {media_score:.1f})")
             st.write("Recomendação: Manter acompanhamento regular de engajamento.")
