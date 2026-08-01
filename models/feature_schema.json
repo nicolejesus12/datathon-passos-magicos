@@ -1,0 +1,25 @@
+{
+  "required_columns": [
+    "idade",
+    "anos_programa",
+    "iaa",
+    "ieg",
+    "ips",
+    "ida",
+    "ipv",
+    "ian",
+    "defasagem_atual",
+    "risco_atual",
+    "gap_autoavaliacao_desempenho",
+    "media_ida_ieg",
+    "min_indicadores",
+    "qtd_indicadores_ausentes",
+    "fase",
+    "genero",
+    "instituicao"
+  ],
+  "output": {
+    "probability": "float entre 0 e 1",
+    "risk": "probability >= 0.135148"
+  }
+}
