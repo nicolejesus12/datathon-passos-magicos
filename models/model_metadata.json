@@ -1,0 +1,170 @@
+{
+  "model_name": "xgboost",
+  "target": "target_risco_proximo_ano = 1 quando defasagem no próximo ano < 0",
+  "prediction_horizon": "um ano",
+  "decision_threshold": 0.13514795899391174,
+  "features": [
+    "idade",
+    "anos_programa",
+    "iaa",
+    "ieg",
+    "ips",
+    "ida",
+    "ipv",
+    "ian",
+    "defasagem_atual",
+    "risco_atual",
+    "gap_autoavaliacao_desempenho",
+    "media_ida_ieg",
+    "min_indicadores",
+    "qtd_indicadores_ausentes",
+    "fase",
+    "genero",
+    "instituicao"
+  ],
+  "numeric_features": [
+    "idade",
+    "anos_programa",
+    "iaa",
+    "ieg",
+    "ips",
+    "ida",
+    "ipv",
+    "ian",
+    "defasagem_atual",
+    "risco_atual",
+    "gap_autoavaliacao_desempenho",
+    "media_ida_ieg",
+    "min_indicadores",
+    "qtd_indicadores_ausentes"
+  ],
+  "categorical_features": [
+    "fase",
+    "genero",
+    "instituicao"
+  ],
+  "dataset": {
+    "train_2022_to_2023": {
+      "n": 600,
+      "positives": 366,
+      "positive_rate": 0.61
+    },
+    "test_2023_to_2024": {
+      "n": 765,
+      "positives": 308,
+      "positive_rate": 0.40261437908496733
+    },
+    "overlap_ra_train_test": 468
+  },
+  "model_comparison": {
+    "regressao_logistica": {
+      "best_params": {
+        "model__C": 10.0
+      },
+      "cv_precision": 0.857855939341907,
+      "cv_recall": 0.7894853757867456,
+      "cv_roc_auc": 0.8741656137908974,
+      "oof_threshold_f2": 0.115834480486318,
+      "temporal_test": {
+        "threshold": 0.115834480486318,
+        "precision": 0.4117647058823529,
+        "recall": 0.38636363636363635,
+        "f1": 0.39865996649916247,
+        "roc_auc": 0.45160419449259714,
+        "pr_auc": 0.36487221680699927,
+        "brier_score": 0.3996930475746699,
+        "confusion_matrix": [
+          [
+            287,
+            170
+          ],
+          [
+            189,
+            119
+          ]
+        ],
+        "positive_rate": 0.40261437908496733,
+        "predicted_positive_rate": 0.37777777777777777,
+        "n": 765
+      },
+      "robustness_score": 0.45160419449259714
+    },
+    "random_forest": {
+      "best_params": {
+        "model__max_depth": null,
+        "model__min_samples_leaf": 3
+      },
+      "cv_precision": 0.8353635946111451,
+      "cv_recall": 0.7758237689744538,
+      "cv_roc_auc": 0.8523278629458855,
+      "oof_threshold_f2": 0.19708738145020338,
+      "temporal_test": {
+        "threshold": 0.19708738145020338,
+        "precision": 0.5411334552102377,
+        "recall": 0.961038961038961,
+        "f1": 0.6923976608187135,
+        "roc_auc": 0.8224232004319532,
+        "pr_auc": 0.773217679913686,
+        "brier_score": 0.16966157561867007,
+        "confusion_matrix": [
+          [
+            206,
+            251
+          ],
+          [
+            12,
+            296
+          ]
+        ],
+        "positive_rate": 0.40261437908496733,
+        "predicted_positive_rate": 0.7150326797385621,
+        "n": 765
+      },
+      "robustness_score": 0.8224232004319532
+    },
+    "xgboost": {
+      "best_params": {
+        "model__learning_rate": 0.03,
+        "model__max_depth": 3
+      },
+      "cv_precision": 0.8534879204808785,
+      "cv_recall": 0.7758978156238431,
+      "cv_roc_auc": 0.8617859695641557,
+      "oof_threshold_f2": 0.13514795899391174,
+      "temporal_test": {
+        "threshold": 0.13514795899391174,
+        "precision": 0.5294117647058824,
+        "recall": 0.935064935064935,
+        "f1": 0.676056338028169,
+        "roc_auc": 0.8357014976270996,
+        "pr_auc": 0.7995098693529454,
+        "brier_score": 0.16048116981983185,
+        "confusion_matrix": [
+          [
+            201,
+            256
+          ],
+          [
+            20,
+            288
+          ]
+        ],
+        "positive_rate": 0.40261437908496733,
+        "predicted_positive_rate": 0.7111111111111111,
+        "n": 765
+      },
+      "robustness_score": 0.8357014976270996
+    }
+  },
+  "selection_protocol": "maior min(ROC-AUC da CV 2022->2023, ROC-AUC temporal 2023->2024); a métrica temporal deve ser interpretada como validação, pois participa da seleção",
+  "evaluated_before_refit": true,
+  "final_refit_rows": 1365,
+  "created_at_utc": "2026-08-01T12:20:18.554352+00:00",
+  "versions": {
+    "python": "3.12.13",
+    "pandas": "3.0.5",
+    "scikit_learn": "1.9.0",
+    "xgboost": "3.3.0",
+    "joblib": "1.5.3"
+  }
+}
