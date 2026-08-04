@@ -2,6 +2,14 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import os
+import importlib
+
+# Importa o módulo src.predict
+import src.predict as predict_module
+# Recarrega obrigatoriamente para limpar a memória do Streamlit
+importlib.reload(predict_module)
+
+from src.predict import load_model, predict_risk
 
 # Configuração da página
 st.set_page_config(
@@ -40,7 +48,7 @@ with st.sidebar:
     st.info("Projeto Datathon — PosTech Data Analytics")
     st.markdown("---")
     st.markdown("**Integrantes do Grupo:**")
-    st.caption("• Integrante 1 (EDA)\n• Integrante 2 (Storytelling)\n• Integrante 3 (Machine Learning)\n• Integrante 4 (Engenharia & Streamlit)")
+    st.caption("• Ana Monteiro\n• Guilherme Roxo\n• Gustavo Martins\n• Nicole Jesus")
 
 # Cabeçalho Principal
 st.title("Associação Passos Mágicos")
@@ -54,7 +62,7 @@ aba1, aba2, aba3 = st.tabs([
     "Modelo Preditivo (Risco)"
 ])
 
-# ABA 1: CONTEXTO DO PROJETO
+# CONTEXTO DO PROJETO
 with aba1:
     st.header("Sobre a Passos Mágicos")
     st.write(
@@ -68,7 +76,21 @@ with aba1:
     with col_b:
         st.success("**Público-Alvo:** Equipe pedagógica, psicólogos e gestores da Passos Mágicos.")
 
-# ABA 2: DASHBOARD DE INDICADORES (Integração dos Achados do Tópico 1)
+    st.markdown("---")
+    st.subheader("Apresentação Gerencial (Storytelling)")
+
+    # Botão para baixar a apresentação
+    pdf_path = os.path.join("reports", "Passos_Magicos_Storytelling.pdf")
+    if os.path.exists(pdf_path):
+        with open(pdf_path, "rb") as file:
+            st.download_button(
+                label="Baixar Apresentação em PDF",
+                data=file,
+                file_name="Passos_Magicos_Storytelling.pdf",
+                mime="application/pdf"
+            )
+
+# DASHBOARD DE INDICADORES
 with aba2:
     st.header("Evolução dos Indicadores (2022 – 2024) 📊")
     st.write("Resultados da Análise Exploratória de Dados consolidados do programa PEDE.")
@@ -87,34 +109,59 @@ with aba2:
     with st.container(border=True):
         st.subheader("Resumo das Análises Exploratórias")
         st.markdown("""
-        * **Adequação do Nível (IAN):** A proporção de alunos no nível máximo de adequação ($IAN = 10,0$) subiu de **30,12% (2022)** para **53,81% (2024)**, enquanto a defasagem severa ($IAN = 2,5$) foi reduzida de **3,26%** para apenas **0,26%**.
+        * **Adequação do Nível (IAN):** A proporção de alunos no nível máximo de adequação (IAN = 10,0) subiu de **30,12% (2022)** para **53,81% (2024)**, enquanto a defasagem severa (IAN = 2,5) foi reduzida de **3,26%** para apenas **0,26%**.
         * **Desempenho Acadêmico (IDA):** A média geral do desempenho evoluiu de **6,09 (2022)** para **6,66 (2023)** e estabilizou em **6,35 (2024)**, demonstrando avanço consistente ao longo do ciclo.
         """)
 
-# ABA 3: SIMULAÇÃO PREDITIVA
+# SIMULAÇÃO PREDITIVA
 with aba3:
-    st.header("Simulação Preditiva de Risco de Defasagem")
-    st.write("Insira os indicadores do aluno para simular a probabilidade de risco:")
+    st.header("Predição de Risco de Defasagem (Machine Learning)")
+    st.write("Insira os indicadores do aluno para que o modelo preditivo calcule a probabilidade real de risco:")
 
     col1, col2 = st.columns(2)
     with col1:
-        ian = st.slider("IAN (Adequação do Nível)", 0.0, 10.0, 5.0)
-        ida = st.slider("IDA (Desempenho Acadêmico)", 0.0, 10.0, 5.0)
-        ieg = st.slider("IEG (Engajamento)", 0.0, 10.0, 5.0)
+        ian = st.slider("IAN (Adequação do Nível)", 0.0, 10.0, 8.0, 0.1)
+        ida = st.slider("IDA (Desempenho Acadêmico)", 0.0, 10.0, 8.0, 0.1)
+        ieg = st.slider("IEG (Engajamento)", 0.0, 10.0, 8.0, 0.1)
 
     with col2:
-        iaa = st.slider("IAA (Autoavaliação)", 0.0, 10.0, 5.0)
-        ips = st.slider("IPS (Aspectos Psicossociais)", 0.0, 10.0, 5.0)
-        ipp = st.slider("IPP (Aspectos Psicopedagógicos)", 0.0, 10.0, 5.0)
+        iaa = st.slider("IAA (Autoavaliação)", 0.0, 10.0, 8.0, 0.1)
+        ips = st.slider("IPS (Aspectos Psicossociais)", 0.0, 10.0, 8.0, 0.1)
+        ipp = st.slider("IPP (Aspectos Psicopedagógicos)", 0.0, 10.0, 8.0, 0.1)
 
     st.markdown("---")
     
     if st.button("Calcular Risco do Aluno", type="primary"):
-        st.subheader("Resultado da Análise:")
-        media_score = (ian + ida + ieg + ips) / 4
-        if media_score < 5.0:
-            st.error(f"**Alto Risco de Defasagem** (Score Médio: {media_score:.1f})")
-            st.write("Recomendação: Encaminhar para acompanhamento psicopedagógico prioritário.")
-        else:
-            st.success(f"**Baixo Risco de Defasagem** (Score Médio: {media_score:.1f})")
-            st.write("Recomendação: Manter acompanhamento regular de engajamento.")
+        df_aluno = pd.DataFrame([{
+            'ian': ian,
+            'ida': ida,
+            'ieg': ieg,
+            'iaa': iaa,
+            'ips': ips,
+            'ipp': ipp
+        }])
+        try:
+            # Carrega o modelo treinado
+            bundle = load_model("models/modelo_risco_defasagem.joblib")
+
+            resultado_df = predict_module.predict_risk(bundle, df_aluno)
+            
+            probabilidade = resultado_df["probabilidade_risco"].iloc[0] * 100
+            risco_detectado = resultado_df["risco_previsto"].iloc[0]
+
+            st.subheader("Resultado da Análise Preditiva:")
+
+            # # Mostra o valor percentual real para ver se varia quando você mexe nos sliders
+            # st.write(f"**Probabilidade exata calculada:** `{probabilidade:.2f}%`")
+            # st.write(f"**Threshold do Modelo:** `{bundle.get('threshold', 0.5) * 100:.2f}%`")
+
+            if risco_detectado:
+                st.error("**Atenção: Alto Risco de Defasagem Detectado!**")
+                st.warning("Recomendação: Aluno elegível para intervenção prioritária.")
+            else:
+                st.success("**Baixo Risco de Defasagem**")
+                st.info("Recomendação: Manter acompanhamento de engajamento regular.")
+
+        except Exception as e:
+            st.error("Erro ao comunicar com o modelo preditivo.")
+            st.code(str(e))
